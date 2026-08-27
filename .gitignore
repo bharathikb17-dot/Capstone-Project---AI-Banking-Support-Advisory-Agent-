@@ -1,0 +1,24 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime logs (redacted interaction/feedback data)
+logs/*.jsonl
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
