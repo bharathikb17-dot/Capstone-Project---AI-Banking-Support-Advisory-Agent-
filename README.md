@@ -3,7 +3,7 @@
 **Track A — LangChain · Scenario 2 — Banking.** A Streamlit app where each of the 9
 capstone phases is a page selectable from the left sidebar.
 
-**🔗 Live demo:** https://muwbxnot6y3oz5ybtcappjz.streamlit.app/
+**🔗 Live demo (Streamlit Community Cloud):** https://muwbxnot6y3oz5ybtcappjz.streamlit.app/
 
 ## Safety requirements (enforced throughout)
 - Must refuse money movement, approvals, or legal advice.
