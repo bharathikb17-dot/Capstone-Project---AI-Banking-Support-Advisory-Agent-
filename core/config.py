@@ -26,20 +26,36 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 load_dotenv(ROOT_DIR / ".env")
 
+
+def _get(name: str, default: str = "") -> str:
+    """Read config from environment first, then Streamlit secrets (cloud)."""
+    val = os.getenv(name)
+    if val:
+        return val
+    try:  # st.secrets works only inside a Streamlit runtime
+        import streamlit as st
+
+        if name in st.secrets:
+            return str(st.secrets[name])
+    except Exception:
+        pass
+    return default
+
+
 # ---------------------------------------------------------------------------
 # LLM provider settings
 # ---------------------------------------------------------------------------
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "").strip()
-OPENAI_CHAT_MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-4o-mini")
-OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small")
+OPENAI_API_KEY = _get("OPENAI_API_KEY").strip()
+OPENAI_BASE_URL = _get("OPENAI_BASE_URL").strip()
+OPENAI_CHAT_MODEL = _get("OPENAI_CHAT_MODEL", "gpt-4o-mini")
+OPENAI_EMBED_MODEL = _get("OPENAI_EMBED_MODEL", "text-embedding-3-small")
 
-USE_AZURE = os.getenv("USE_AZURE", "0") == "1"
-AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY", "").strip()
-AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT", "").strip()
-AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-06-01")
-AZURE_OPENAI_CHAT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "").strip()
-AZURE_OPENAI_EMBED_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMBED_DEPLOYMENT", "").strip()
+USE_AZURE = _get("USE_AZURE", "0") == "1"
+AZURE_OPENAI_API_KEY = _get("AZURE_OPENAI_API_KEY").strip()
+AZURE_OPENAI_ENDPOINT = _get("AZURE_OPENAI_ENDPOINT").strip()
+AZURE_OPENAI_API_VERSION = _get("AZURE_OPENAI_API_VERSION", "2024-06-01")
+AZURE_OPENAI_CHAT_DEPLOYMENT = _get("AZURE_OPENAI_CHAT_DEPLOYMENT").strip()
+AZURE_OPENAI_EMBED_DEPLOYMENT = _get("AZURE_OPENAI_EMBED_DEPLOYMENT").strip()
 
 
 def llm_available() -> bool:
@@ -52,9 +68,9 @@ def llm_available() -> bool:
 # ---------------------------------------------------------------------------
 # LangSmith tracing (enabled automatically when an API key is present)
 # ---------------------------------------------------------------------------
-LANGSMITH_API_KEY = (os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY", "")).strip()
-LANGSMITH_PROJECT = (os.getenv("LANGSMITH_PROJECT") or os.getenv("LANGCHAIN_PROJECT") or "banking-advisory-agent").strip()
-LANGSMITH_ENDPOINT = (os.getenv("LANGSMITH_ENDPOINT") or os.getenv("LANGCHAIN_ENDPOINT") or "https://api.smith.langchain.com").strip()
+LANGSMITH_API_KEY = (_get("LANGSMITH_API_KEY") or _get("LANGCHAIN_API_KEY")).strip()
+LANGSMITH_PROJECT = (_get("LANGSMITH_PROJECT") or _get("LANGCHAIN_PROJECT") or "banking-advisory-agent").strip()
+LANGSMITH_ENDPOINT = (_get("LANGSMITH_ENDPOINT") or _get("LANGCHAIN_ENDPOINT") or "https://api.smith.langchain.com").strip()
 
 
 def langsmith_enabled() -> bool:
